@@ -10,6 +10,11 @@ def time():
     if time_in_mins == 0:
         label = Label(root, text ="Please enter a value above 0!", font =("Consolas", 10, 'bold')) # making a button that ensures mins are above 0
         label.place(x=75, y=200)
+    elif time_in_mins == 1:
+        label = Label(root, text = f"Alarm set for {time_in_mins} minute")
+        label.pack()
+        time_in_ms = int(time_in_mins) * 60 * 1000 # Convert minutes to milliseconds
+        root.after(time_in_ms, ringtone)
     else:
         label = Label(root, text = f"Alarm set for {time_in_mins} minutes")
         label.pack()
