@@ -4,6 +4,7 @@ from tkinter import colorchooser
 import time 
 from playsound import playsound
 from PIL import Image, ImageTk
+from colorsys import rgb_to_hls, hls_to_rgb
 
 root = Tk()
 
@@ -21,8 +22,61 @@ alarm_welcome = Label(root, text="Alarm Clock", font=("Consolas", 15, "bold"), c
 alarm_welcome.pack()
 
 # author name etc
-byline = Label(root, text="Made by Rain", font=("Consolas", 10, 'italic'))
+byline = Label(root, text="Made by Rain", font=("Consolas", 10, 'italic'),)
 byline.place(x=150, y=25)
+
+def get_complementary_color(hex_color):
+    try:
+        # Remove the '#' if present
+        hex_color = hex_color.lstrip('#')
+        
+        
+        rgb = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4)) # calculating rgb values
+        
+        
+        h, l, s = rgb_to_hls(rgb[0]/255.0, rgb[1]/255.0, rgb[2]/255.0)
+        
+        
+        comp_h = (h + 0.5) % 1.0
+        
+        
+        comp_rgb = hls_to_rgb(comp_h, l, s)
+        
+        
+        comp_rgb = tuple(max(0, min(int(x * 255), 255)) for x in comp_rgb)
+        
+        
+        return '#{:02x}{:02x}{:02x}'.format(*comp_rgb)
+    except Exception as e:
+        print(f"Error in get_complementary_color: {e}")
+        return "#000000"  
+
+def colour():
+    global dropdown, button, submit_button  # Ensure these are accessible
+
+    colour = colorchooser.askcolor()
+    if not colour[1]:  # User cancelled the color chooser
+        return
+    
+    colourHex = colour[1]
+    
+    try:
+        # Calculate complementary color
+        comp_color = get_complementary_color(colourHex)
+        
+        # Update all widgets
+        for widget in root.winfo_children():
+            if isinstance(widget, (Button, Label, Scale)):
+                widget.config(fg=comp_color, bg=colourHex)
+            
+            # Special handling for Scale widget
+            if isinstance(widget, Scale):
+                widget.config(troughcolor=colourHex, activebackground=comp_color)
+
+        # Update the root window background
+        root.config(bg=colourHex)
+    except Exception as e:
+        print(f"Error in colour function: {e}")
 
 def countdown(time_in_mins):
     time_left = time_in_mins * 60  # Convert minutes to seconds
@@ -53,10 +107,6 @@ def time():
         label.pack()
         countdown(time_in_mins)
 
-def colour():
-    colour = colorchooser.askcolor()
-    colourHex = colour[1]
-    root.config(bg=colourHex)
 
 
 def ringtone():
@@ -71,8 +121,8 @@ label.place(x=30, y=100)
 dropdown = Scale(root, from_=0,to=60)
 dropdown.place(x=150, y=50)
 
-button = Button(root, text="Submit", font=("Consolas", 20, 'italic'), command=time)
-button.place(x=200, y=50)
+submit_button = Button(root, text="Submit", font=("Consolas", 20, 'italic'), command=time)
+submit_button.place(x=200, y=50)
 
 button = Button(root, text="Choose Colour", font=("Consolas", 8, 'bold'), command=colour)
 button.place(x=150, y=450)
