@@ -1,11 +1,13 @@
 from tkinter import *
+#from tkinter.ttk import *
+from tkinter import colorchooser
 import time 
 from playsound import playsound
 from PIL import Image, ImageTk
 
 root = Tk()
 
-root.title("Alarm Clock - Made by Rain")
+root.title("Alarm Clock - Made by Rain") # geometry for the window
 root.geometry("400x500")
 
 # load the image
@@ -51,10 +53,19 @@ def time():
         label.pack()
         countdown(time_in_mins)
 
+def colour():
+    colour = colorchooser.askcolor()
+    colourHex = colour[1]
+    root.config(bg=colourHex)
+
+
 def ringtone():
     playsound(r'c:\Users\aniru\Downloads\Nokia ringtone arabic.mp3')
 
-label = Label(root, text = "Enter the time: ", font = ("Consolas", 10, 'bold'))
+#progress = Progressbar(root, orient=HORIZONTAL, length=100)
+#progress.pack()
+
+label = Label(root, text = "Enter the time: ", font = ("Consolas", 10, 'bold')) 
 label.place(x=30, y=100)
 
 dropdown = Scale(root, from_=0,to=60)
@@ -62,5 +73,8 @@ dropdown.place(x=150, y=50)
 
 button = Button(root, text="Submit", font=("Consolas", 20, 'italic'), command=time)
 button.place(x=200, y=50)
+
+button = Button(root, text="Choose Colour", font=("Consolas", 8, 'bold'), command=colour)
+button.place(x=150, y=450)
 
 root.mainloop()
